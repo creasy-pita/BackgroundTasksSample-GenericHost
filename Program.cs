@@ -27,22 +27,22 @@ namespace BackgroundTasksSample
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddLogging();
-                    services.AddSingleton<MonitorLoop>();
+                    //services.AddLogging();
+                    //services.AddSingleton<MonitorLoop>();
 
                     #region snippet1
                     services.AddHostedService<TimedHostedService>();
                     #endregion
 
-                    #region snippet2
-                    services.AddHostedService<ConsumeScopedServiceHostedService>();
-                    services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
-                    #endregion
+                    //#region snippet2
+                    //services.AddHostedService<ConsumeScopedServiceHostedService>();
+                    //services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
+                    //#endregion
 
-                    #region snippet3
-                    services.AddHostedService<QueuedHostedService>();
-                    services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-                    #endregion
+                    //#region snippet3
+                    //services.AddHostedService<QueuedHostedService>();
+                    //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
+                    //#endregion
                 })
                 .UseConsoleLifetime()
                 .Build();
@@ -53,8 +53,8 @@ namespace BackgroundTasksSample
                 await host.StartAsync();
 
                 // Monitor for new background queue work items
-                var monitorLoop = host.Services.GetRequiredService<MonitorLoop>();
-                monitorLoop.StartMonitorLoop();
+                //var monitorLoop = host.Services.GetRequiredService<MonitorLoop>();
+                //monitorLoop.StartMonitorLoop();
 
                 // Wait for the host to shutdown
                 await host.WaitForShutdownAsync();

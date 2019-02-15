@@ -23,7 +23,7 @@ namespace BackgroundTasksSample.Services
             _logger.LogInformation("Timed Background Service is starting.");
 
             _timer = new Timer(DoWork, null, TimeSpan.Zero, 
-                TimeSpan.FromSeconds(60));
+                TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
         }
