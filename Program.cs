@@ -5,6 +5,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using BackgroundTasksSample.Services;
 using System.Threading;
+using Serilog;
+using System;
 
 namespace BackgroundTasksSample
 {
@@ -12,16 +14,17 @@ namespace BackgroundTasksSample
     {
         public static async Task Main(string[] args)
         {
+            
             var host = new HostBuilder()
-                .ConfigureLogging((hostContext, config) =>
-                {
-                    config.AddConsole();
-                    config.AddDebug();
-                })
+                //.ConfigureLogging((hostContext, config) =>
+                //{
+                //    config.AddConsole();
+                //    config.AddDebug();
+                //})
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddEnvironmentVariables();
-                    config.AddJsonFile("appsettings.json", optional: true);
+                    //config.AddJsonFile("appsettings.json", optional: true);
                     config.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true);
                     config.AddCommandLine(args);
                 })
@@ -29,7 +32,15 @@ namespace BackgroundTasksSample
                 {
                     //services.AddLogging();
                     //services.AddSingleton<MonitorLoop>();
-
+                    Log.Logger = new LoggerConfiguration()
+                        .MinimumLevel.Debug()
+                        .WriteTo.RollingFile(@"Logs\log{Date}.log")
+                        .CreateLogger();
+                    Log.Information($"{ System.Environment.CurrentDirectory}");
+                    foreach(var arg in args)
+                    {
+                        Log.Information($"args:{arg}");
+                    }
                     #region snippet1
                     services.AddHostedService<TimedHostedService>();
                     #endregion
@@ -44,6 +55,7 @@ namespace BackgroundTasksSample
                     //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
                     //#endregion
                 })
+                .UseSerilog()
                 .UseConsoleLifetime()
                 .Build();
 

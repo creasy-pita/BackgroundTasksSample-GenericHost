@@ -46,8 +46,9 @@ namespace BackgroundTasksSample.Services
                     }
                 }
             }
-                //OracleConnection 
-                _logger.LogInformation("Timed Background Service is working.");
+            //OracleConnection 
+            Serilog.Log.Information("Timed Background Service is working11.");
+            _logger.LogInformation("Timed Background Service is working.");
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
