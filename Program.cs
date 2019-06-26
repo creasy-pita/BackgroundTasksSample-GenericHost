@@ -14,7 +14,22 @@ namespace BackgroundTasksSample
     {
         public static async Task Main(string[] args)
         {
-            
+            try
+            {
+                var configuration = new ConfigurationBuilder()
+                    .AddJsonFile($"appsettings.json")
+                    .Build();
+
+                var logger = new LoggerConfiguration()
+                    .ReadFrom.Configuration(configuration)
+                    .CreateLogger();
+                logger.Information("HELLO you know for log");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ddddd" + ex.Message);
+            }
+
             var host = new HostBuilder()
                 //.ConfigureLogging((hostContext, config) =>
                 //{
@@ -24,40 +39,22 @@ namespace BackgroundTasksSample
                 .ConfigureAppConfiguration((hostContext, config) =>
                 {
                     config.AddEnvironmentVariables();
-                    //config.AddJsonFile("appsettings.json", optional: true);
-                    config.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true);
+                    config.AddJsonFile("appsettings.json", optional: true);
+                    //config.AddJsonFile($"appsettings.{hostContext.HostingEnvironment.EnvironmentName}.json", optional: true);
                     config.AddCommandLine(args);
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
                     //services.AddLogging();
                     //services.AddSingleton<MonitorLoop>();
-                    Log.Logger = new LoggerConfiguration()
-                        .MinimumLevel.Debug()
-                        .WriteTo.RollingFile(@"Logs\log{Date}.log")
-                        .CreateLogger();
-                    Log.Information($"{ System.Environment.CurrentDirectory}");
-                    foreach(var arg in args)
-                    {
-                        Log.Information($"args:{arg}");
-                    }
                     #region snippet1
                     services.AddHostedService<TimedHostedService>();
                     #endregion
-
-                    //#region snippet2
-                    //services.AddHostedService<ConsumeScopedServiceHostedService>();
-                    //services.AddScoped<IScopedProcessingService, ScopedProcessingService>();
-                    //#endregion
-
-                    //#region snippet3
-                    //services.AddHostedService<QueuedHostedService>();
-                    //services.AddSingleton<IBackgroundTaskQueue, BackgroundTaskQueue>();
-                    //#endregion
                 })
-                .UseSerilog()
+                //.UseSerilog()
                 .UseConsoleLifetime()
                 .Build();
+
 
             using (host)
             {
@@ -71,6 +68,18 @@ namespace BackgroundTasksSample
                 // Wait for the host to shutdown
                 await host.WaitForShutdownAsync();
             }
+            ////host.WaitForShutdownAsync(); 之后的代码段关闭app后才会执行
+
+            //    var configuration = new ConfigurationBuilder()
+            //        .AddJsonFile($"appsettings.json")
+            //        .Build();
+
+            //    var logger = new LoggerConfiguration()
+            //        .ReadFrom.Configuration(configuration)
+            //        .CreateLogger();
+            //    logger.Information("HELLO you know for log");
+
+
         }
     }
 }
