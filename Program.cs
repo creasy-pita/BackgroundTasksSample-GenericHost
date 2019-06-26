@@ -14,21 +14,21 @@ namespace BackgroundTasksSample
     {
         public static async Task Main(string[] args)
         {
-            try
-            {
-                var configuration = new ConfigurationBuilder()
-                    .AddJsonFile($"appsettings.json")
-                    .Build();
+            //try
+            //{
+            //    var configuration = new ConfigurationBuilder()
+            //        .AddJsonFile($"appsettings.json")
+            //        .Build();
 
-                var logger = new LoggerConfiguration()
-                    .ReadFrom.Configuration(configuration)
-                    .CreateLogger();
-                logger.Information("HELLO you know for log");
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("ddddd" + ex.Message);
-            }
+            //    var logger = new LoggerConfiguration()
+            //        .ReadFrom.Configuration(configuration)
+            //        .CreateLogger();
+            //    logger.Information("HELLO you know for log");
+            //}
+            //catch (Exception ex)
+            //{
+            //    Console.WriteLine("ddddd" + ex.Message);
+            //}
 
             var host = new HostBuilder()
                 //.ConfigureLogging((hostContext, config) =>
@@ -50,10 +50,14 @@ namespace BackgroundTasksSample
                     #region snippet1
                     services.AddHostedService<TimedHostedService>();
                     #endregion
+                    ConfigService.Configuration = hostContext.Configuration;
                 })
-                //.UseSerilog()
+                .UseSerilog((ctx, config) => { config.ReadFrom.Configuration(ctx.Configuration); })
                 .UseConsoleLifetime()
                 .Build();
+
+            //Log.Logger = host.Services.GetRequiredService<Serilog.ILogger>();
+            Log.Logger.Information("HELLO you know for logger 11111");
 
 
             using (host)
@@ -68,16 +72,7 @@ namespace BackgroundTasksSample
                 // Wait for the host to shutdown
                 await host.WaitForShutdownAsync();
             }
-            ////host.WaitForShutdownAsync(); 之后的代码段关闭app后才会执行
 
-            //    var configuration = new ConfigurationBuilder()
-            //        .AddJsonFile($"appsettings.json")
-            //        .Build();
-
-            //    var logger = new LoggerConfiguration()
-            //        .ReadFrom.Configuration(configuration)
-            //        .CreateLogger();
-            //    logger.Information("HELLO you know for log");
 
 
         }

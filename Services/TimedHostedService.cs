@@ -21,9 +21,12 @@ namespace BackgroundTasksSample.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Timed Background Service is starting.");
+            //job with timer
+            //_timer = new Timer(DoWork, null, TimeSpan.Zero, 
+            //    TimeSpan.FromSeconds(10));
 
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, 
-                TimeSpan.FromSeconds(10));
+            //job with quartz
+            ScheduleJob.ExecuteByCron<MyJob>(Component.GetTimerSet());
 
             return Task.CompletedTask;
         }
